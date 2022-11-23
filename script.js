@@ -103,50 +103,33 @@ function updateDOM() {
   updateSavedColumns();
 }
 
-function updateListArray(list, array){
 
-  array = [];
-  for (let i=0; i< list.children.length; i++){
-    array.push(list.children[i].textContent);
-
-  }
-  console.log(array)
-  console.log(list)
-}
 
 
 // Allows array to reflect Drag and Drop items
 function rebuildArrays() {
 
-  // for (let i = 0; i < arrayNames.length; i++){
-  //   updateListArray(`${arrayNames[i]}List`, listArrays[i], i);
-  // }
-
-  // updateListArray(backlogList, backlogListArray);
-  // updateListArray(progressList, progressListArray)
 
   backlogListArray = [];
   for (let i = 0; i< backlogList.children.length; i++){
     backlogListArray.push(backlogList.children[i].textContent);
   }
-  console.log(backlogListArray)
-  console.log(backlogList)
+
 
   progressListArray = [];
   for (let i = 0; i< progressList.children.length; i++){
     progressListArray.push(progressList.children[i].textContent);
   }
-  // console.log(progressListArray)
-  // console.log(progressList)
-  // completeListArray = [];
-  // for (let i = 0; i< completeList.children.length; i++){
-  //   completeListArray.push(completeList.children[i].textContent);
-  // }
 
-  // onHoldListArray = [];
-  // for (let i = 0; i< onHoldList.children.length; i++){
-  //   onHoldListArray.push(onHoldList.children[i].textContent);
-  // }
+  completeListArray = [];
+  for (let i = 0; i< completeList.children.length; i++){
+    completeListArray.push(completeList.children[i].textContent);
+  }
+
+  onHoldListArray = [];
+  for (let i = 0; i< onHoldList.children.length; i++){
+    onHoldListArray.push(onHoldList.children[i].textContent);
+  }
   updateDOM();
 }
 

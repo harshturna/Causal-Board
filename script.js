@@ -23,6 +23,7 @@ const arrayNames = ['backlog', 'progress', 'complete', 'onHold'];
 // Drag Functionality
 let draggedItem;
 let currentColumn;
+let dragging = false;
 
 
 
@@ -54,6 +55,13 @@ function updateSavedColumns() {
   }
 }
 
+// Filter Arrays to remove empty items
+function filterArray(array){
+  const filteredArray = array.filter(item => item !== null);
+  return filteredArray;
+}
+
+
 // Create DOM Elements for each list item
 function createItemEl(columnEl, column, item, index) {
 
@@ -61,10 +69,12 @@ function createItemEl(columnEl, column, item, index) {
   const listEl = document.createElement('li');
   listEl.classList.add('drag-item');
   listEl.textContent = item;
-  columnEl.appendChild(listEl);
   listEl.draggable = true;
   listEl.setAttribute('ondragstart', 'drag(event)');
-
+  listEl.contentEditable = true;
+  listEl.id = index;
+  listEl.setAttribute('onfocusout', `updateItem(${index}, ${column})`);
+  columnEl.appendChild(listEl);
 }
 
 // Update Columns in DOM - Reset HTML, Filter Array, Update localStorage
@@ -78,30 +88,52 @@ function updateDOM() {
   backlogListArray.forEach((backlogItem, index)=> {
     createItemEl(backlogList, 0, backlogItem, index);
   });
+  backlogListArray = filterArray(backlogListArray);
 
 
   // Progress Column
   progressList.textContent = '';
   progressListArray.forEach((progressItem, index)=> {
-    createItemEl(progressList, 0, progressItem, index);
+    createItemEl(progressList, 1, progressItem, index);
   });
+  progressListArray = filterArray(progressListArray);
 
   // Complete Column
   completeList.textContent = '';
   completeListArray.forEach((completeItem, index)=> {
-    createItemEl(completeList, 0, completeItem, index);
+    createItemEl(completeList, 2, completeItem, index);
   });
+  completeListArray = filterArray(completeListArray);
 
   // On Hold Column
   onHoldList.textContent = '';
   onHoldListArray.forEach((onHoldItem, index)=> {
-    createItemEl(onHoldList, 0, onHoldItem, index);
+    createItemEl(onHoldList, 3, onHoldItem, index);
   });
+  onHoldListArray = filterArray(onHoldListArray);
 
   // Run getSavedColumns only once, Update Local Storage
   updatedOnLoad = true;
   updateSavedColumns();
 }
+
+// Update Item - Delete if necessary, or update Array val
+function updateItem(id, column){
+  const selectedArray = listArrays[column];
+  const selectColumnEl = listCoumns[column].children;
+  if (!dragging) {
+    if (!selectColumnEl[id].textContent){
+      delete selectedArray[id];
+    }
+    else {
+      selectedArray[id] = selectColumnEl[id].textContent;
+    }
+    updateDOM();
+  }
+  }
+  
+
+
 
 //Add to column list, Rest textbox
 
@@ -158,6 +190,7 @@ function rebuildArrays() {
 
 // For dragging items
 function drag(e) {
+  dragging = true;
   draggedItem = e.target;
   }
 
@@ -183,6 +216,7 @@ function drop(e) {
   listCoumns.forEach((column)=>{
     column.classList.remove('over');
   });
+  dragging = false;
 
   rebuildArrays();
 }
